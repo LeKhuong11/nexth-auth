@@ -23,13 +23,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if(!isPasswordCorrect) { 
             return res.status(401).json({ message: 'Password is incorrect' });
         }
-
-        if (!process.env.JWT_SECRET) {
+            
+        if (!JWT_SECRET) {
             throw new Error('JWT_SECRET is not defined');
         }
-        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "1h" });
+        const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: "15m" });
 
-        res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Secure=false; SameSite=Strict; Path=/; Max-Age=3600`);
+        res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Secure=false; SameSite=Strict; Path=/; Max-Age=900`);
 
         res.status(200).json({ 
             token,

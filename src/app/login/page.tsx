@@ -3,6 +3,7 @@
 import Head from "next/head";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "../context-provider";
 
 export default function Login() {
   const router = useRouter();
@@ -11,6 +12,8 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const { setUser } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,8 +31,9 @@ export default function Login() {
         throw new Error("Invalid email or password!");
       }
 
-      // Redirect to dashboard after successful login
-      router.push("/dashboard");
+      const data = await res.json();
+      setUser(data.user);
+      router.push("/profile");
     } catch (err) {
       setLoading(false);
       if (err instanceof Error) {
@@ -45,7 +49,7 @@ export default function Login() {
       <Head>
         <title>Login</title>
       </Head>
-      <div className="flex min-h-screen items-center justify-center bg-gray-100">
+      <div className="relative flex min-h-screen items-center justify-center bg-gray-100">
         <div className="w-full max-w-md space-y-6 rounded-lg bg-white p-8 shadow-md">
           <h2 className="text-center text-2xl font-bold text-gray-700">Login</h2>
 
@@ -92,7 +96,7 @@ export default function Login() {
           <div className="text-center text-sm text-gray-600">
             <p>
               Don&apos;t have an account?{" "}
-              <a href="/auth/register" className="text-blue-500 hover:underline">
+              <a href="/register" className="text-blue-500 hover:underline">
                 Register
               </a>
             </p>

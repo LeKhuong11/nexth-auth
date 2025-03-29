@@ -1,16 +1,16 @@
+import { verifyToken } from '@/utils/verify-token'
 import { NextRequest, NextResponse } from 'next/server'
 
 const privatePaths = ['/dashboard', '/admin', '/profile']
 const authPaths = ['/login', '/register']
 
 export function middleware(req: NextRequest) {
-    const token = req.cookies.get('token')?.value
+    const token = req.cookies.get('token')?.value ?? '';
+    const isVerify = verifyToken(token);
     const { pathname } = req.nextUrl
-    
-    console.log("token", token);
 
     // Nếu user chưa đăng nhập và cố vào trang bảo mật -> Chuyển hướng về login
-    if (privatePaths.some(path => pathname.startsWith(path)) && !token) {
+    if (privatePaths.some(path => pathname.startsWith(path)) && !isVerify) {
         return NextResponse.redirect(new URL('/login', req.url))
     }
 
